@@ -1,4 +1,5 @@
 import click
+from tabulate import tabulate
 
 from clients.services import ClientService
 from clients.models import Client
@@ -41,18 +42,12 @@ def list(ctx):
     Client_service = ClientService(ctx.obj['clients_table'])
 
     client_list =  Client_service.list_clients()
-
-    click.echo("  ID   |  NAME  |  COMPANY  |  EMAIL  |  POSITION")
-    click.echo( "*"* 100)
-
+    
+    data = []
+    data.append(["ID","NAME","COMPANY","EMAIL","POSITION"])
     for client in client_list:
-        click.echo("  {uid}  |  {name}  |  {company}  |  {email}  |  {position}  ".format(
-            uid = client['uid'],
-            name = client['name'],
-            company = client['company'],
-            email = client['email'],
-            position = client['position']
-        ))
+        data.append([client['uid'],client['name'],client['company'],client['email'],client['position']])
+    print(tabulate(data,headers='firstrow'))
 
 @clients.command()
 @click.argument('client_uid', type=str)
